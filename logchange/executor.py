@@ -9,13 +9,7 @@ from pathlib import Path
 from newversion import Version
 
 from logchange.changelog import ChangeLog
-from logchange.constants import (
-    AUTO,
-    LATEST,
-    NEW_CHANGELOG,
-    SECTION_ALL,
-    UNRELEASED,
-)
+from logchange.constants import LATEST, NEW_CHANGELOG, SECTION_ALL, UNRELEASED
 from logchange.eol_fixer import EOLFixer
 from logchange.record import Record
 from logchange.record_body import RecordBody
@@ -118,8 +112,7 @@ class Executor:
 
         if not self.config.format:
             self.logger.info(
-                f"{print_path(self.changelog_path)} already exists."
-                " Add `-f` to reformat it."
+                f"{print_path(self.changelog_path)} already exists." " Add `-f` to reformat it."
             )
             return ""
 

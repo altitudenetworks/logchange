@@ -48,9 +48,7 @@ class Record:
     def _parse_title(title: str) -> Tuple[str, str]:
         title_parts = title.split()
         version = (
-            title_parts[1].replace("[", "").replace("]", "")
-            if len(title_parts) > 1
-            else "0.0.0"
+            title_parts[1].replace("[", "").replace("]", "") if len(title_parts) > 1 else "0.0.0"
         )
         created = title_parts[3] if len(title_parts) > 3 else ""
         return (version, created)

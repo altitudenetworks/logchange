@@ -1,6 +1,4 @@
-from typing import Type, TypeVar
-
-from logchange.utils import dedent
+from typing import TypeVar
 
 _R = TypeVar("_R", bound="RecordSection")
 

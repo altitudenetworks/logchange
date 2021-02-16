@@ -4,7 +4,6 @@ MINOR_SECTION_TITLES = {"added", "changed", "deprecated"}
 SECTION_ALL = "all"
 LATEST = "latest"
 UNRELEASED = "unreleased"
-AUTO = "auto"
 
 NEW_CHANGELOG = """# Changelog
 All notable changes to this project will be documented in this file.

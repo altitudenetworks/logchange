@@ -62,9 +62,7 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
         "logchange",
         description="Keep-a-changelog manager",
     )
-    parser.add_argument(
-        "-V", "--version", action="version", version=version, help="Show version"
-    )
+    parser.add_argument("-V", "--version", action="version", version=version, help="Show version")
     subparsers = parser.add_subparsers(help="Available subcommands", dest="command")
 
     parser_init = subparsers.add_parser("init", help="Create CHANGELOG.md")
@@ -82,9 +80,7 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
         help="Format existing changelog and write back",
     )
 
-    parser_add = subparsers.add_parser(
-        "add", help="Add or update a record in CHANGELOG.md"
-    )
+    parser_add = subparsers.add_parser("add", help="Add or update a record in CHANGELOG.md")
     parser_add.add_argument(
         "name",
         type=get_version_latest_or_unreleased,
@@ -118,9 +114,7 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
         help="Full path to changelog file. Default: ./CHANGELOG.md",
     )
 
-    parser_set = subparsers.add_parser(
-        "set", help="Write new or existing record to CHANGELOG.md"
-    )
+    parser_set = subparsers.add_parser("set", help="Write new or existing record to CHANGELOG.md")
     parser_set.add_argument(
         "name",
         type=get_version_latest_or_unreleased,

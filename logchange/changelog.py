@@ -22,9 +22,7 @@ class ChangeLog:
         self.head = head
         self._released = released.strip()
         self._released_records: List[Record] = []
-        self._unreleased = Record(
-            Version.zero(), created="", body=RecordBody.parse(unreleased)
-        )
+        self._unreleased = Record(Version.zero(), created="", body=RecordBody.parse(unreleased))
 
     @property
     def released(self) -> List[Record]:

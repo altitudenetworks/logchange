@@ -2,11 +2,7 @@ from typing import Iterable, Type, TypeVar
 
 from newversion import Version
 
-from logchange.constants import (
-    MAJOR_SECTION_TITLES,
-    MINOR_SECTION_TITLES,
-    SECTION_TITLES,
-)
+from logchange.constants import MAJOR_SECTION_TITLES, MINOR_SECTION_TITLES, SECTION_TITLES
 from logchange.record_section import RecordSection
 from logchange.utils import dedent
 

@@ -5,9 +5,9 @@ ROOT_PATH=$(dirname $(dirname $0))
 cd $ROOT_PATH
 
 npx pyright
-pytest
-black logchange tests
-isort logchange tests
+# pytest
+isort .
+black .
 flake8 logchange
 
 ./scripts/docs.sh

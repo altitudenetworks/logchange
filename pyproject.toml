@@ -70,3 +70,12 @@ known_first_party = [
     "tests",
 ]
 src_paths = []
+
+[tool.black]
+line-length = 100
+include = '(logchange|tests)/.*\.pyi?$'
+target-version = [
+    'py36',
+    'py37',
+    'py38',
+]
