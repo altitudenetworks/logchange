@@ -10,11 +10,15 @@ class RecordSection:
         self.title = title
         self.body = body
 
+    @property
+    def name(self) -> str:
+        return self.title.capitalize()
+
     def is_empty(self) -> bool:
         return self.body == ""
 
     def render(self) -> str:
-        return f"### {self.title.capitalize()}\n{self.body}"
+        return f"### {self.name}\n{self.body}"
 
     def append(self, appendix: str) -> None:
         self.body = f"{self.body}{appendix}"

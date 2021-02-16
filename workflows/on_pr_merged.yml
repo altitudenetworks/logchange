@@ -1,0 +1,70 @@
+name: Update version and CHANGELOG.md
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  draft:
+    if: github.event.pull_request.merged == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.9"
+      - uses: actions/github-script@v3
+        name: Get Pull Request body
+        id: body
+        with:
+          script: return github.context.payload.pull_request.body
+      - uses: actions/github-script@v3
+        name: Get Release Draft body
+        id: release-body
+        with:
+          script: return github.context.payload.release.body
+      - uses: actions/github-script@v3
+        name: Get Release Draft tag
+        id: release-tag
+        with:
+          script: return github.context.payload.release.version
+      - name: Install builder dependencies
+        run: |
+          python -m pip install -U logchange newversion poetry
+      - name: Get version
+        id: version
+        run: |
+          VERSION=`poetry version | python -m newversion`
+          echo "::set-output name=result::${VERSION}"
+      - name: Update Release Draft body
+        id: new-release-body
+        env: |
+          PR_BODY: "${{steps.body.outputs.result}}"
+          RELEASE_BODY: "${{steps.release-body.outputs.result}}"
+        run: |
+          echo "${RELEASE_BODY}" >> /tmp/NOTE.md
+          echo "${PR_BODY}" > /tmp/NOTE.md
+          NEW_BODY=`cat /tmp/NOTE.md | python -m logchange notes`
+          echo "::set-output name=result::${NEW_BODY}"
+      - name: Update Release Draft tag
+        id: new-release-tag
+        env: |
+          VERSION: "${{steps.version.outputs.result}}"
+          PR_BODY: "${{steps.body.outputs.result}}"
+          TAG: "${{steps.release-tag.outputs.result}}"
+        run: |
+          echo "${RELEASE_BODY}" >> /tmp/NOTE.md
+          echo "${PR_BODY}" > /tmp/NOTE.md
+          NEW_TAG=`echo "${PR_BODY}" | python -m logchange version ${VERSION}`
+          if `echo ${NEW_TAG} | newversion gt ${TAG}`; then
+            TAG="${NEW_TAG}"
+          fi
+          TAG=`echo ${TAG} | newversion`
+          echo "::set-output name=result::${TAG}"
+      - name: Update Release Draft
+        uses: actions/update-release-draft@v1
+        with:
+          tag: ${{steps.new-release-tag.outputs.result}}
+          title: ${{steps.new-release-tag.outputs.result}}
+          body: ${{steps.new-release-body.outputs.result}}

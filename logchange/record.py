@@ -1,3 +1,4 @@
+import logging
 from typing import Tuple, Type, TypeVar
 
 from newversion import Version
@@ -20,6 +21,7 @@ class Record:
         self.version = version
         self.created = created
         self.body = body
+        self.logger = logging.getLogger("logchange")
 
     @property
     def name(self) -> str:
@@ -59,7 +61,12 @@ class Record:
         if not text:
             return cls(Version.zero(), created="", body=RecordBody())
 
-        title, lines = text.split("\n", 1)
+        try:
+            title, lines = text.split("\n", 1)
+        except ValueError:
+            title = text
+            lines = ""
+
         version, created = cls._parse_title(title)
         return cls(
             version=Version(version),
@@ -69,3 +76,37 @@ class Record:
 
     def is_empty(self) -> bool:
         return self.body.is_empty()
+
+    def set_section(self, title: str, body: str) -> None:
+        section = self.body.get_section(title)
+        was_empty = section.is_empty()
+        section.body = body
+        self.body.set_section(title, body)
+        if was_empty:
+            if body:
+                self.logger.info(f"{self.name} `{section.name}` section added")
+        else:
+            if body:
+                self.logger.info(f"{self.name} `{section.name}` section overwritten")
+            else:
+                self.logger.info(f"{self.name} `{section.name}` section deleted")
+
+    def append_section(self, title: str, body: str) -> None:
+        section = self.body.get_section(title)
+        was_empty = section.is_empty()
+        section.append_lines(body)
+        if was_empty:
+            if body:
+                self.logger.info(f"{self.name} `{section.name}` section added")
+        elif body:
+            self.logger.info(f"{self.name} `{section.name}` section updated")
+
+    def set_body(self, text: str) -> None:
+        new_body = RecordBody.parse(text)
+        for section in new_body.sections.values():
+            self.set_section(section.title, section.body)
+
+    def merge_body(self, text: str) -> None:
+        new_body = RecordBody.parse(text)
+        for section in new_body.sections.values():
+            self.append_section(section.title, section.body)

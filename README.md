@@ -41,6 +41,10 @@ logchange get 0.1.0 added
 < - Another feature
 ```
 
+### GitHub Actions
+
+See `workflows` folder.
+
 ## Versioning
 
 `logchange` version follows [PEP 440](https://www.python.org/dev/peps/pep-0440/).

@@ -2,6 +2,7 @@
 CLI commands executor.
 """
 import argparse
+import datetime
 import logging
 from pathlib import Path
 
@@ -45,6 +46,9 @@ class Executor:
     @property
     def changelog_path(self) -> Path:
         return self.config.changelog_path
+
+    def get_today(self) -> str:
+        return datetime.datetime.now().date().strftime("%Y-%m-%d")
 
     @property
     def changelog(self) -> ChangeLog:
@@ -94,6 +98,7 @@ class Executor:
         commands = dict(
             init=self._command_init,
             add=self._command_add,
+            set=self._command_set,
             get=self._command_get,
             format=self._command_format,
             list=self._command_list,
@@ -101,7 +106,7 @@ class Executor:
         )
         command = self.config.command
         if command not in commands:
-            raise ExecutorError("Unknown command")
+            raise ExecutorError(f"Unknown command: {command}")
 
         return self._fix_eol(commands[self.config.command]())
 
@@ -133,38 +138,60 @@ class Executor:
         self.logger.info(f"{print_path(self.changelog_path)} reformatted.")
         return ""
 
+    def _get_record(self, changelog: ChangeLog, release_name: str) -> Record:
+        if release_name == UNRELEASED:
+            return changelog.get_unreleased()
+        if release_name == LATEST:
+            record = changelog.get_latest()
+            if record is not None:
+                return record
+            raise ExecutorError(
+                f"No releases found in {print_path(self.changelog_path)}, pass explicit version"
+            )
+
+        record = changelog.get_record(Version(release_name))
+        if record is not None:
+            return record
+
+        self.logger.info(f"Record {release_name} not found, added")
+        return Record(
+            version=Version(release_name),
+            body=RecordBody(),
+            created=self.get_today(),
+        )
+
     def _command_add(self) -> str:
         release_name = self.release_name
         changelog = self.changelog
-        if release_name == UNRELEASED:
-            record = changelog.get_unreleased()
-        elif release_name == LATEST:
-            record = changelog.get_latest()
-            if not record:
-                raise ExecutorError(
-                    f"No releases found in {print_path(self.changelog_path)}, pass explicit version"
-                )
-        else:
-            record = changelog.get_record(Version(release_name))
-
-        if not record:
-            self.logger.info(f"Record {release_name} not found, added")
-            record = Record(
-                version=Version(release_name),
-                body=RecordBody(),
-                created=self.config.created,
-            )
+        record = self._get_record(changelog, release_name)
 
         if self.config.section == SECTION_ALL:
-            record_body = RecordBody.parse(self.input)
-            record.body = record.body.merge(record_body)
-            self.logger.info(f"Record {record.name} section updated")
+            record.merge_body(self.input)
         else:
             section_name = self.config.section
-            record.body.append_lines(section_name, self._as_md_list(self.input))
-            self.logger.info(
-                f"Record {record.name} {section_name.capitalize()} section updated"
-            )
+            record.append_section(section_name, self._as_md_list(self.input))
+
+        if self.config.created:
+            record.created = self.config.created
+
+        changelog.update_release(record)
+        self.save_changelog(changelog)
+        return ""
+
+    def _command_set(self) -> str:
+        release_name = self.release_name
+        changelog = self.changelog
+        record = self._get_record(changelog, release_name)
+
+        if self.config.section == SECTION_ALL:
+            record.set_body(self.input)
+        else:
+            section_name = self.config.section
+            value = self._as_md_list(self.input)
+            record.set_section(section_name, value)
+
+        if self.config.created:
+            record.created = self.config.created
 
         changelog.update_release(record)
         self.save_changelog(changelog)

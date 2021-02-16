@@ -2,7 +2,6 @@
 Main CLI parser.
 """
 import argparse
-import datetime
 import sys
 from pathlib import Path
 from typing import Sequence
@@ -10,13 +9,7 @@ from typing import Sequence
 import pkg_resources
 from newversion import Version, VersionError
 
-from logchange.constants import (
-    AUTO,
-    LATEST,
-    SECTION_ALL,
-    SECTION_TITLES,
-    UNRELEASED,
-)
+from logchange.constants import LATEST, SECTION_ALL, SECTION_TITLES, UNRELEASED
 
 
 def get_existing_path(value: str) -> Path:
@@ -35,11 +28,9 @@ def get_version_latest_or_unreleased(value: str) -> str:
         return value
 
     try:
-        Version(value)
+        return Version(value).dumps()
     except VersionError as e:
         raise argparse.ArgumentTypeError(e) from None
-
-    return value
 
 
 def get_stdin() -> str:
@@ -91,11 +82,13 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
         help="Format existing changelog and write back",
     )
 
-    parser_add = subparsers.add_parser("add", help="Add new record to CHANGELOG.md")
+    parser_add = subparsers.add_parser(
+        "add", help="Add or update a record in CHANGELOG.md"
+    )
     parser_add.add_argument(
         "name",
         type=get_version_latest_or_unreleased,
-        default=AUTO,
+        default=LATEST,
         help="Release name: version, `latest` or `unreleased`",
     )
     parser_add.add_argument(
@@ -114,10 +107,46 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
     )
     parser_add.add_argument(
         "--created",
-        default=datetime.datetime.now().date().strftime("%Y-%m-%d"),
+        default="",
         help="Created date in `YYYY-MM-DD` format.",
     )
     parser_add.add_argument(
+        "-p",
+        "--changelog-path",
+        type=Path,
+        default=Path.cwd() / "CHANGELOG.md",
+        help="Full path to changelog file. Default: ./CHANGELOG.md",
+    )
+
+    parser_set = subparsers.add_parser(
+        "set", help="Write new or existing record to CHANGELOG.md"
+    )
+    parser_set.add_argument(
+        "name",
+        type=get_version_latest_or_unreleased,
+        default=LATEST,
+        help="Release name: version, `latest` or `unreleased`",
+    )
+    parser_set.add_argument(
+        "section",
+        help="Section name or `All`",
+        nargs="?",
+        type=lambda x: x.lower(),
+        default=SECTION_ALL,
+        choices=[SECTION_ALL, *SECTION_TITLES],
+    )
+    parser_set.add_argument(
+        "-i",
+        "--input",
+        default=None,
+        help="Change notes, can be provided as a pipe-in as well.",
+    )
+    parser_set.add_argument(
+        "--created",
+        default="",
+        help="Created date in `YYYY-MM-DD` format.",
+    )
+    parser_set.add_argument(
         "-p",
         "--changelog-path",
         type=Path,
@@ -188,7 +217,7 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
 
     if result.command == "get" and not result.changelog_path.exists():
         raise argparse.ArgumentTypeError(
-            "CHANGELOG.md does not exist in current folder"
+            "CHANGELOG.md does not exist in current folder, run `logchange init`"
         )
 
     return result
