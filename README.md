@@ -20,8 +20,7 @@ python -m pip install logchange
 
 ### CLI
 
-
-See [examples](https://github.com/vemel/logchange/tree/main/examples) folder.
+See [examples/cli.sh](https://github.com/vemel/logchange/tree/main/examples/cli.sh) folder.
 
 ```bash
 # create CHANGELOG.md if it does not exist
