@@ -20,6 +20,9 @@ python -m pip install logchange
 
 ### CLI
 
+
+See [examples](https://github.com/vemel/logchange/tree/main/examples) folder.
+
 ```bash
 # create CHANGELOG.md if it does not exist
 # or reformat existing (please check changes manually)
@@ -49,7 +52,7 @@ logchange get 0.1.0 added
 
 ### GitHub Actions
 
-See `workflows` folder.
+See [workflows](https://github.com/vemel/logchange/tree/main/examples/workflows) folder.
 
 ## Versioning
 

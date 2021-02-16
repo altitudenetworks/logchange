@@ -12,10 +12,12 @@ from newversion import Version, VersionError
 from logchange.constants import LATEST, SECTION_ALL, SECTION_TITLES, UNRELEASED
 
 
-def get_existing_path(value: str) -> Path:
+def get_changelog_path(value: str) -> Path:
     path = Path(value)
-    if not path.exists():
-        raise argparse.ArgumentTypeError(f"Path {path} des not exist")
+
+    if path.exists() and path.is_dir():
+        path = path / "CHANGELOG.md"
+
     return path
 
 
@@ -167,7 +169,7 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
     parser_get.add_argument(
         "-p",
         "--changelog-path",
-        type=get_existing_path,
+        type=get_changelog_path,
         default=Path.cwd() / "CHANGELOG.md",
         help="Full path to changelog file. Default: ./CHANGELOG.md",
     )
@@ -184,7 +186,7 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
     parser_list.add_argument(
         "-p",
         "--changelog-path",
-        type=get_existing_path,
+        type=get_changelog_path,
         default=Path.cwd() / "CHANGELOG.md",
         help="Full path to changelog file. Default: ./CHANGELOG.md",
     )
@@ -202,6 +204,13 @@ def parse_args(args: Sequence[str]) -> argparse.Namespace:
         "--input",
         default=None,
         help="Change notes, can be provided as a pipe-in as well.",
+    )
+    parser_version.add_argument(
+        "-p",
+        "--changelog-path",
+        type=get_changelog_path,
+        default=Path.cwd() / "CHANGELOG.md",
+        help="Full path to changelog file. Default: ./CHANGELOG.md",
     )
 
     result = parser.parse_args(args)

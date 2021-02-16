@@ -10,7 +10,7 @@
 
 ## CLIError
 
-[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/main.py#L17)
+[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/main.py#L18)
 
 ```python
 class CLIError(Exception):
@@ -20,7 +20,7 @@ Main CLI error
 
 ## main_api
 
-[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/main.py#L23)
+[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/main.py#L24)
 
 ```python
 def main_api(config: argparse.Namespace) -> str:
@@ -30,7 +30,7 @@ Main API entrypoint.
 
 ## main_cli
 
-[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/main.py#L34)
+[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/main.py#L35)
 
 ```python
 def main_cli() -> None:

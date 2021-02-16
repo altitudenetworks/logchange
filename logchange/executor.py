@@ -47,9 +47,7 @@ class Executor:
     @property
     def changelog(self) -> ChangeLog:
         if not self.changelog_path.exists():
-            self.logger.info(
-                f"{print_path(self.changelog_path)} does not exists, generated a new one."
-            )
+            self.logger.warning(f"{print_path(self.changelog_path)} does not exists")
             return ChangeLog.parse(NEW_CHANGELOG)
 
         text = self.changelog_path.read_text()
@@ -221,5 +219,9 @@ class Executor:
 
     def _command_version(self) -> str:
         old_version: Version = self.config.version
-        record_body = RecordBody.parse(self.input)
+        if self.input:
+            record_body = RecordBody.parse(self.input)
+        else:
+            record_body = self.changelog.get_unreleased().body
+
         return record_body.bump_version(old_version).dumps()

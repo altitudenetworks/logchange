@@ -11,6 +11,7 @@ def setup_logging(level: int) -> None:
     logger.setLevel(level)
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(level)
+    stream_handler.setFormatter(logging.Formatter("%(levelname)s - %(message)s"))
     logger.addHandler(stream_handler)
 
 

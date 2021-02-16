@@ -50,7 +50,7 @@ def changelog_path() -> Path:
 
 ### Executor().execute
 
-[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/executor.py#L85)
+[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/executor.py#L83)
 
 ```python
 def execute() -> str:
@@ -81,7 +81,7 @@ def input() -> str:
 
 ### Executor().release_name
 
-[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/executor.py#L62)
+[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/executor.py#L60)
 
 ```python
 @property
@@ -90,7 +90,7 @@ def release_name() -> str:
 
 ### Executor().save_changelog
 
-[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/executor.py#L59)
+[[find in source code]](https://github.com/vemel/logchange/blob/main/logchange/executor.py#L57)
 
 ```python
 def save_changelog(changelog: ChangeLog) -> None:
