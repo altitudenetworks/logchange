@@ -4,7 +4,7 @@ View, update and format your changelog anywhere!
 
 ## Features
 
-- Kepp your changelog in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) style
+- Keeps your changelog in [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) style
 - Supports version bumping from [semver](https://pypi.org/project/semver/)
 - Comes with a CLI tool `logchange`
 - Respects MarkDown
@@ -29,6 +29,12 @@ logchange init -f
 cat NOTES_0.1.0.md | logchange add 0.1.0
 # or
 logchange add 0.2.0 -i `cat NOTES_0.2.0.md`
+
+# update existing or create a new section in latest release
+logchange add latest added -i 'New feature'
+
+# set unreleased section
+logchange set unreleased fixed -i 'Unreleased fix'
 
 # list released versions
 logchange list
