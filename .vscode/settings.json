@@ -1,0 +1,33 @@
+{
+    "python.formatting.provider": "black",
+    "python.linting.mypyEnabled": false,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": false,
+    "python.linting.enabled": true,
+    "python.linting.pycodestyleEnabled": false,
+    "editor.codeActionsOnSave": [
+        "source.organizeImports"
+    ],
+    "python.sortImports.args": [
+        "--profile=black",
+        "--line-width=80",
+        "-p",
+        "logchange",
+        "-p",
+        "tests"
+    ],
+    "python.formatting.blackArgs": [
+        "--fast"
+    ],
+    "python.languageServer": "Pylance",
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "mypy_boto3_output": true,
+        ".mypy_cache": true,
+        ".pytest_cache": true
+    }
+}
